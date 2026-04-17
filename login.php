@@ -15,8 +15,9 @@ if(isset($_POST['login'])){
     $Uname = $_POST['username'];
     $pass = $_POST['password'];
 
-    if($Uname == "" || $pass == ""){
-        $_SESSION['error'] = "All Feilds Are Required!";
+
+    if(empty($Uname) || empty($pass)){
+        $_SESSION['error'] = "All Feilds Are Required";
         header("Location: ". $_SERVER['PHP_SELF']);
         exit;
     }
@@ -24,23 +25,23 @@ if(isset($_POST['login'])){
     $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE username=?");
     $stmt->bind_param("s", $Uname);
     $stmt->execute();
-    $GetResult =  $stmt->get_result();
-    if($row = $GetResult->fetch_assoc()){
+    $GetUsers = $stmt->get_result();
+    if($row = $GetUsers->fetch_assoc()){
         if(password_verify($pass,$row['password'])){
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['role'] = $row['role'];
 
             if($_SESSION['role'] == 'admin'){
-                $_SESSION['success'] = "Welcome to Admin Dashboard";
+                $_SESSION['success'] = "Welcome to Admin Dashboard!";
                 header("Location: admin/admin.php");
                 exit;
             }else{
-                $_SESSION['success'] = "Welcome to Employee Dashboard";
+                $_SESSION['success'] = "Welcome to Employee Dashboard!";
                 header("Location: user/profile.php");
                 exit;
             }
         }else{
-            $_SESSION['error'] = "Incorrect Password";
+            $_SESSION['error'] = "Encorrect Password";
             header("Location: ". $_SERVER['PHP_SELF']);
             exit;
         }
@@ -51,7 +52,6 @@ if(isset($_POST['login'])){
     }
 }
 ?>
-
             
 <?php include 'template/header.php'; ?>
 

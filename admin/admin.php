@@ -1,11 +1,12 @@
-<?php 
-include '../connection/db.php'; 
+<?php
+include '../connection/db.php';
 
-if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
     header("Location: ../login.php");
-    exit;
 }
 ?>
+
+
 <?php include '../template/header.php'; ?>
 
 <?php include '../template/navbar.php'; ?>
@@ -14,11 +15,21 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
 
     <?php include '../alert.php'; ?>
 
+    <?php include 'modal_add_employee.php'; ?>
+
+
+
     <button type="button" class="btn btn-success my-3" data-bs-toggle="modal" data-bs-target="#addEmployee">
         ADD EMPLOYEE
     </button>
 
+
+
     <div class="table-responsive">
+
+
+        <input type="text" id="search" class="form-control mb-3" placeholder="Search employee...">
+
         <table class="table table-bordered table-hover table-striped text-center">
 
             <thead class="table-dark">
@@ -34,13 +45,19 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
                     <th>ACTION</th>
                 </tr>
             </thead>
-            <?php 
-            $stmt = $conn->prepare("SELECT * FROM users");
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_assoc()):
-            ?>
-            <tbody>
+
+            <tbody id="table-data">
+                <?php
+                $stmt = $conn->prepare("SELECT * FROM users ORDER BY date DESC");
+                $stmt->execute();
+                $getAllData = $stmt->get_result();
+
+                if ($getAllData->num_rows > 0):
+
+                    while ($row = $getAllData->fetch_assoc()):
+
+
+                ?>
                 <tr>
                     <td><?= $row['id']; ?></td>
                     <td><?= $row['fullname']; ?></td>
@@ -51,20 +68,33 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
                     <td><?= $row['role']; ?></td>
                     <td><?= $row['date']; ?></td>
                     <td>
-                       <a href="update.php?id=<?= $row['id']; ?>" class="btn btn-primary btn-sm">UPDATE</a>
-                        <!-- <button class="btn btn-sm btn-primary">Edit</button> -->
-                         <form action="function/function.php" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="<?= $row['id']; ?>">
+                        <div class="d-flex gap-1 justify-content-center">
 
-                            <button type="submit" name="delete" class="btn btn-sm btn-danger" 
-                            onclick="return confirm('Are You Sure You Want to delete This record?')">
-                            DELETE</button>
-                         </form>
-                       
+                            <a href="update.php?id=<?= $row['id']; ?>" class="btn btn-outline-success btn-sm">UPDATE</a>
+
+                            <form action="function/function.php" method="post">
+                                <input type="hidden" name="id" value="<?= $row['id']; ?>">
+                                <button type="submit" name="delete" class="btn btn-outline-danger btn-sm"
+                                    onclick="return confirm('Are You Sure You Want to delete This Record?')">DELETE</button>
+                            </form>
+                        </div>
+
                     </td>
                 </tr>
+
+                <?php endwhile;
+                else:
+                    ?>
+                <tr>
+                    <td colspan="9" class="text-danger text-center">NO DATA FOUND</td>
+                </tr>
+                <!-- <tr>
+                <td colspan="9" class="text-danger text-center">No Data Found</td>
+            </tr> -->
+
+                <?php endif; ?>
             </tbody>
-            <?php endwhile; ?>
+
 
         </table>
     </div>
@@ -72,70 +102,24 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
 </div>
 
 
+<script>
+document.getElementById("search").addEventListener("keyup", function() {
 
-<!-- MODAL FOR CREATE DATA -->
+    let value = this.value;
 
-<div class="modal fade" id="addEmployee" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">ADD EMPLOYEE</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="function/function.php" method="post">
-                <div class="modal-body">
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "search.php", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-                    <div class="mb-3">
-                        <label for="">Full Name</label>
-                        <input type="text" name="fullname" id="" class="form-control" placeholder="Enter Fullname">
-                    </div>
+    xhr.onload = function() {
+        if (this.status == 200) {
+            document.getElementById("table-data").innerHTML = this.responseText;
+        }
+    }
 
-                    <div class="mb-3">
-                        <label for="">Email</label>
-                        <input type="email" name="email" id="" class="form-control" Placeholder="Enter Email">
-                    </div>
+    xhr.send("search=" + value);
+});
+</script>
 
-                    <div class="mb-3">
-                        <label for="">Contact</label>
-                        <input type="number" name="contact" id="" class="form-control" Placeholder="Contact">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="">User Name</label>
-                        <input type="text" name="username" id="" class="form-control" placeholder="Enter Username">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="">Position</label>
-                        <select name="position" id="" class="form-control">
-                            <option value="webdev">Web Developer</option>
-                            <option value="frontdev">Front End Developer</option>
-                            <option value="hrd">HRD</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="">Role</label>
-                        <select name="role" id="" class="form-control">
-                            <option value="admin">ADMIN</option>
-                            <option value="employee">EMPLOYEE</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="">Password</label>
-                        <input type="password" name="password" id="" class="form-control" placeholder="Enter Password">
-                    </div>
-
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" name="create">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <?php include '../template/footer.php'; ?>

@@ -32,6 +32,14 @@
         /* box-shadow: 0 10px 60px rgba(0, 0, 0, 0.5); */
          box-shadow: 0 0 20px rgba(0,255,255,0.8);
     }
+
+    .shadow{
+        border: 1px solid black;
+    }
+
+    .shadow_form{
+        border: 1px solid green;
+    }
     </style>
 </head>
 

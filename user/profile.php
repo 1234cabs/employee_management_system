@@ -10,9 +10,7 @@ $id = $_SESSION['user_id'];
 $stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$GetProfile = $stmt->get_result();
-
-$Result = $GetProfile->fetch_assoc();
+$GetData = $stmt->get_result()->fetch_assoc(); 
 ?>
 <?php include '../template/header.php'; ?>
 
@@ -33,7 +31,7 @@ $Result = $GetProfile->fetch_assoc();
                     <th><b>FULL NAME:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $Result['fullname']; ?></th>
+                    <th><?= $GetData['fullname']; ?></th>
                 </tr>
                 <hr>
 
@@ -42,7 +40,7 @@ $Result = $GetProfile->fetch_assoc();
                     <th><b>EMAIL:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $Result['email']; ?></th>
+                    <th><?= $GetData['email']; ?></th>
                 </tr>
                 <hr>
 
@@ -51,7 +49,7 @@ $Result = $GetProfile->fetch_assoc();
                     <th><b>CONTACT:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $Result['contact']; ?></th>
+                    <th><?= $GetData['contact']; ?></th>
                 </tr>
                 <hr>
 
@@ -60,16 +58,25 @@ $Result = $GetProfile->fetch_assoc();
                     <th><b>POSITION:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $Result['position']; ?></th>
+                    <th><?= $GetData['position']; ?></th>
                 </tr>
                 <hr>
 
-                         <!-- ROLE -->
+                <!-- ROLE -->
                 <tr>
                     <th><b>ROLE:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $Result['role']; ?></th>
+                    <th><?= $GetData['role']; ?></th>
+                </tr>
+                <hr>
+
+                <!-- Username -->
+                <tr>
+                    <th><b>USERNAME:</b> </th>
+                </tr>
+                <tr>
+                    <th><?= $GetData['username']; ?></th>
                 </tr>
                 <hr>
 

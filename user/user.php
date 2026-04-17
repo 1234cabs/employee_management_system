@@ -1,9 +1,11 @@
 <?php 
-include '../connection/db.php'; 
+include '../connection/db.php';
+
 if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'employee'){
     header("Location: ../login.php");
-    exit;
 }
+
+
 ?>
 <?php include '../template/header.php'; ?>
 
@@ -28,14 +30,17 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'employee'){
                     <th>POSITION</th>
                     <th>ROLE</th>
                     <th>DATE ADDED</th>
-                 
+
                 </tr>
             </thead>
             <?php 
-            $stmt = $conn->prepare("SELECT * FROM users");
+            $stmt = $conn->prepare("SELECT * FROM users ORDER BY date DESC");
             $stmt->execute();
-            $result = $stmt->get_result();
-            while($row = $result->fetch_assoc()):
+            $getUsers = $stmt->get_result();
+
+            if($getUsers->num_rows > 0):
+
+            while($row = $getUsers->fetch_assoc()):
             ?>
             <tbody>
                 <tr>
@@ -47,12 +52,17 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'employee'){
                     <td><?= $row['position']; ?></td>
                     <td><?= $row['role']; ?></td>
                     <td><?= $row['date']; ?></td>
-                 
                 </tr>
             </tbody>
-            <?php endwhile; ?>
-
+            <?php endwhile; 
+            else:
+            ?>
+            <tr>
+                <td colspan="9" class="text-danger text-center">No Data Found</td>
+            </tr>
+            <?php endif; ?>
         </table>
+
     </div>
 
 </div>

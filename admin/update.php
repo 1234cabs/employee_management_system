@@ -1,17 +1,13 @@
 <?php 
 include '../connection/db.php';
 
-if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
-    header("Location: ../login.php");
-}
-
 $id = $_GET['id'] ?? 0;
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$getData = $stmt->get_result();
-$data = $getData->fetch_assoc();
+$GetData = $stmt->get_result()->fetch_assoc();
+// $result = $GetData->fetch_array();
 ?>
 <?php include '../template/header.php'; ?>
 
@@ -29,23 +25,23 @@ $data = $getData->fetch_assoc();
             <div class="card-body">
                 <form action="function/function.php" method="post">
                     <div class="mb-3">
-                        <input type="hidden" name="id" value="<?= $data['id']; ?>">
+                        <input type="hidden" name="id" value="<?= $GetData['id']; ?>">
                         <lable class="form-label">FULLNAME</lable>
-                        <input type="text" name="fullname" id="" class="form-control" value="<?= $data['fullname']; ?>">
+                        <input type="text" name="fullname" id="" class="form-control" value="<?= $GetData['fullname']; ?>">
                     </div>
                     <div class="mb-3">
                         <lable class="form-label">EMAIL</lable>
-                        <input type="email" name="email" id="" class="form-control" value="<?= $data['email']; ?>">
+                        <input type="email" name="email" id="" class="form-control" value="<?= $GetData['email']; ?>">
                     </div>
 
                     <div class="mb-3">
                         <lable class="form-label">CONTACT</lable>
-                        <input type="number" name="contact" id="" class="form-control" value="<?= $data['contact']; ?>">
+                        <input type="number" name="contact" id="" class="form-control" value="<?= $GetData['contact']; ?>">
                     </div>
 
                     <div class="mb-3">
                         <lable class="form-label">USERNAME</lable>
-                        <input type="text" name="username" id="" class="form-control" value="<?= $data['username']; ?>">
+                        <input type="text" name="username" id="" class="form-control" value="<?= $GetData['username']; ?>">
                     </div>
 
                     <!-- <div class="mb-3">
@@ -56,18 +52,16 @@ $data = $getData->fetch_assoc();
                             <option value="hrd">HRD</option>
                         </select>
                     </div> -->
+
+
                     <div class="mb-3">
-                        <label class="form-label">POSITION</label>
-                        <select name="position" class="form-control">
-                            <option value="webdev" <?= ($data['position'] == 'webdev') ? 'selected' : '' ?>>Web Developer
-                            </option>
-                            <option value="frontdev" <?= ($data['position'] == 'frontdev') ? 'selected' : '' ?>>Front End
-                                Developer</option>
-                            <option value="hrd" <?= ($data['position'] == 'hrd') ? 'selected' : '' ?>>HRD</option>
-                        </select>
+                    <label for="">POSITION</label>
+                    <select name="position" id="" class="form-control">
+                        <option value="webdev" <?=  ($GetData['position'] == 'webdev') ? 'selected' : '' ?>>Web Developer</option>
+                        <option value="frontdev" <?= ($GetData['position'] == 'frontdev') ? 'selected' : '' ?>>Front End Developer</option>
+                        <option value="hrd" <?= ($GetData['position'] == 'hrd') ? 'selected' : '' ?>>HRD</option>
+                    </select>
                     </div>
-
-
 
                     <div class="modal-footer">
                         <a href="admin.php" class="btn btn-secondary" style="margin-right: 4px;">CANCEL</a>

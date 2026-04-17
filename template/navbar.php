@@ -1,16 +1,19 @@
-    <?php 
-    // include '../connection/db.php';
+<?php 
 
-    $id = $_SESSION['user_id'];
+// echo "<pre>";
+// print_r($_SESSION);
+// exit;
+$id = $_SESSION['user_id'];
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $getUser = $stmt->get_result();
-    $user = $getUser->fetch_assoc();   
+$stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$GetResult = $stmt->get_result();
+$Result = $GetResult->fetch_assoc();
 
-    ?>
-    
+
+?>
+
     <nav class="navbar navbar-expand-lg bg-dark">
         <div class="container-fluid">
             <a href="#" class="navbar-brand text-white">LOGO</a>
@@ -23,7 +26,7 @@
 
     </nav>
 
-     <!-- PROFILE MODAL -->
+    <!-- PROFILE MODAL -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog custom-modal">
             <div class="modal-content custom">
@@ -31,45 +34,53 @@
                     <h1 class="modal-title fs-5 text-success" id="exampleModalLabel">My Profile</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
+
                 <div class="modal-body">
                     <tr>
                         <th><b>FULLNAME:</b></th>
                     </tr>
                     <tr>
-                        <th >  <?= $user['fullname']; ?></th>
+                        <th><?= $Result['fullname']; ?></th>
                     </tr>
                     <hr>
 
-                      <tr>
+                    <tr>
                         <th><b>EMAIL:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $user['email']; ?></th>
+                        <th><?= $Result['email']; ?></th>
                     </tr>
                     <hr>
 
-                      <tr>
+                    <tr>
                         <th><b>CONTACT:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $user['contact']; ?></th>
+                        <th><?= $Result['contact']; ?></th>
                     </tr>
                     <hr>
 
-                        <tr>
+                    <tr>
                         <th><b>POSITION:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $user['position']; ?></th>
+                        <th><?= $Result['position']; ?></th>
                     </tr>
                     <hr>
 
-                        <tr>
+                    <tr>
                         <th><b>ROLE:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $user['role']; ?></th>
+                        <th><?= $Result['role']; ?></th>
+                    </tr>
+                    <hr>
+
+                    <tr>
+                        <th><b>USERNAME:</b></th>
+                    </tr>
+                    <tr>
+                        <th><?= $Result['username']; ?></th>
                     </tr>
                     <hr>
                 </div>
