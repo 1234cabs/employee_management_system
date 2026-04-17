@@ -1,11 +1,12 @@
 <?php 
 include '../connection/db.php';
+include '../session/session.php';
 
-if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'employee'){
-    header("Location: ../login.php");
-}
-
-
+requiredLogin();
+requiredRole('employee');
+// if(!isset($_SESSION['users']) || $_SESSION['role'] != 'employee'){
+//     header("Location: ../login.php");
+// }
 ?>
 <?php include '../template/header.php'; ?>
 
@@ -33,32 +34,33 @@ if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'employee'){
 
                 </tr>
             </thead>
-            <?php 
-            $stmt = $conn->prepare("SELECT * FROM users ORDER BY date DESC");
-            $stmt->execute();
-            $getUsers = $stmt->get_result();
-
-            if($getUsers->num_rows > 0):
-
-            while($row = $getUsers->fetch_assoc()):
-            ?>
+         
             <tbody>
+                <?php 
+                $stmt = $conn->prepare("SELECT * FROM users ORDER BY date DESC");
+                $stmt->execute();
+                $getResult = $stmt->get_result();
+
+                if($getResult->num_rows > 0):
+
+                while($row = $getResult->fetch_assoc()):
+                ?>
                 <tr>
-                    <td><?= $row['id']; ?></td>
-                    <td><?= $row['fullname']; ?></td>
-                    <td><?= $row['email']; ?></td>
-                    <td><?= $row['contact']; ?></td>
-                    <td><?= $row['username']; ?></td>
-                    <td><?= $row['position']; ?></td>
-                    <td><?= $row['role']; ?></td>
-                    <td><?= $row['date']; ?></td>
+                 <td><?= $row['id']; ?></td>
+                 <td><?= $row['fullname']; ?></td>
+                 <td><?= $row['email']; ?></td>
+                 <td><?= $row['contact']; ?></td>
+                 <td><?= $row['username']; ?></td>
+                 <td><?= $row['position']; ?></td>
+                 <td><?= $row['role']; ?></td>
+                 <td><?= $row['date']; ?></td>
                 </tr>
             </tbody>
-            <?php endwhile; 
+            <?php endwhile;
             else:
             ?>
             <tr>
-                <td colspan="9" class="text-danger text-center">No Data Found</td>
+                <td colspan="9" class="text-danger text-center">NO RECORDS FOUND</td>
             </tr>
             <?php endif; ?>
         </table>

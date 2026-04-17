@@ -1,16 +1,19 @@
 <?php 
 include '../connection/db.php';
+include '../session/session.php';
 
-if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'employee'){
-    header("Location: ../login.php");
-}
+requiredLogin();
+requiredRole('employee');
+// if(!isset($_SESSION['users']) || $_SESSION['role'] != "employee"){
+//     header("Location: ../login.php");
+// }
 
-$id = $_SESSION['user_id'];
+$id = $_SESSION['users'];
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$GetData = $stmt->get_result()->fetch_assoc(); 
+$getUsers = $stmt->get_result()->fetch_assoc();
 ?>
 <?php include '../template/header.php'; ?>
 
@@ -31,7 +34,7 @@ $GetData = $stmt->get_result()->fetch_assoc();
                     <th><b>FULL NAME:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $GetData['fullname']; ?></th>
+                    <th><?= $getUsers['fullname']; ?></th>
                 </tr>
                 <hr>
 
@@ -40,7 +43,7 @@ $GetData = $stmt->get_result()->fetch_assoc();
                     <th><b>EMAIL:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $GetData['email']; ?></th>
+                    <th><?= $getUsers['email']; ?></th>
                 </tr>
                 <hr>
 
@@ -49,7 +52,7 @@ $GetData = $stmt->get_result()->fetch_assoc();
                     <th><b>CONTACT:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $GetData['contact']; ?></th>
+                    <th><?= $getUsers['contact']; ?></th>
                 </tr>
                 <hr>
 
@@ -58,7 +61,7 @@ $GetData = $stmt->get_result()->fetch_assoc();
                     <th><b>POSITION:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $GetData['position']; ?></th>
+                    <th><?= $getUsers['position']; ?></th>
                 </tr>
                 <hr>
 
@@ -67,7 +70,7 @@ $GetData = $stmt->get_result()->fetch_assoc();
                     <th><b>ROLE:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $GetData['role']; ?></th>
+                    <th><?= $getUsers['role']; ?></th>
                 </tr>
                 <hr>
 
@@ -76,7 +79,7 @@ $GetData = $stmt->get_result()->fetch_assoc();
                     <th><b>USERNAME:</b> </th>
                 </tr>
                 <tr>
-                    <th><?= $GetData['username']; ?></th>
+                    <th><?= $getUsers['username']; ?></th>
                 </tr>
                 <hr>
 

@@ -1,9 +1,14 @@
 <?php
 include '../connection/db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
-    header("Location: ../login.php");
-}
+include '../session/session.php';
+
+requiredLogin();
+requiredRole('admin');
+
+// if(!isset($_SESSION['users']) || $_SESSION['role'] != 'admin'){
+//     header("Location: ../login.php");
+// }
 ?>
 
 
@@ -47,16 +52,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
             </thead>
 
             <tbody id="table-data">
-                <?php
+                <?php 
                 $stmt = $conn->prepare("SELECT * FROM users ORDER BY date DESC");
                 $stmt->execute();
-                $getAllData = $stmt->get_result();
+                $getUser = $stmt->get_result();
 
-                if ($getAllData->num_rows > 0):
+                if($getUser->num_rows > 0):
 
-                    while ($row = $getAllData->fetch_assoc()):
-
-
+                while($row = $getUser->fetch_assoc()):
                 ?>
                 <tr>
                     <td><?= $row['id']; ?></td>
@@ -68,30 +71,22 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
                     <td><?= $row['role']; ?></td>
                     <td><?= $row['date']; ?></td>
                     <td>
-                        <div class="d-flex gap-1 justify-content-center">
-
-                            <a href="update.php?id=<?= $row['id']; ?>" class="btn btn-outline-success btn-sm">UPDATE</a>
-
-                            <form action="function/function.php" method="post">
-                                <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                                <button type="submit" name="delete" class="btn btn-outline-danger btn-sm"
-                                    onclick="return confirm('Are You Sure You Want to delete This Record?')">DELETE</button>
-                            </form>
+                        <div class="d-flex gap-1 justofy-content-center">
+                        <a href="update.php?id=<?= $row['id']; ?>" class="btn btn-outline-success btn-sm">UPDATE</a>
+                        <form action="function/function.php" method="post">
+                            <input type="hidden" name="id" value="<?= $row['id']; ?>">
+                            <button type="submit" name="delete" class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Are you Sure You Want to Delete this Recored?')">DELETE</button>
+                        </form>
                         </div>
-
                     </td>
                 </tr>
-
-                <?php endwhile;
+                <?php endwhile; 
                 else:
-                    ?>
+                ?>
                 <tr>
-                    <td colspan="9" class="text-danger text-center">NO DATA FOUND</td>
+                    <td colspan="9" class="text-danger text-center">NO RECORDS FOUND</td>
                 </tr>
-                <!-- <tr>
-                <td colspan="9" class="text-danger text-center">No Data Found</td>
-            </tr> -->
-
                 <?php endif; ?>
             </tbody>
 

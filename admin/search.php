@@ -10,6 +10,8 @@ $stmt->execute();
 
 $result = $stmt->get_result();
 
+if($result->num_rows > 0):
+
 while($row = $result->fetch_assoc()):
 ?>
 
@@ -25,4 +27,14 @@ while($row = $result->fetch_assoc()):
     <td></td>
 </tr>
 
-<?php endwhile; ?>
+<?php endwhile; 
+else:
+?>
+    <tr>
+        <td colspan="9" class="text-danger text-center">NO RECORDS FOUND!</td>
+    </tr>
+<?php endif; ?>
+
+
+
+

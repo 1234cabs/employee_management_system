@@ -1,17 +1,11 @@
-<?php 
 
-// echo "<pre>";
-// print_r($_SESSION);
-// exit;
-$id = $_SESSION['user_id'];
+<?php 
+$id = $_SESSION['users'];
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$GetResult = $stmt->get_result();
-$Result = $GetResult->fetch_assoc();
-
-
+$Result = $stmt->get_result()->fetch_assoc();
 ?>
 
     <nav class="navbar navbar-expand-lg bg-dark">

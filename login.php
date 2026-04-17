@@ -1,7 +1,8 @@
 <?php 
 include 'connection/db.php';
+include 'session/session.php';
 
-if(isset($_SESSION['user_id'])){
+if(isset($_SESSION['users'])){
 
     if($_SESSION['role'] == 'admin'){
         header("Location: admin/admin.php");
@@ -15,39 +16,38 @@ if(isset($_POST['login'])){
     $Uname = $_POST['username'];
     $pass = $_POST['password'];
 
-
     if(empty($Uname) || empty($pass)){
-        $_SESSION['error'] = "All Feilds Are Required";
-        header("Location: ". $_SERVER['PHP_SELF']);
+        $_SESSION['error'] = "All Feilds Are Required!";
+        header("Location: ". $_SERVER["PHP_SELF"]);
         exit;
     }
 
     $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE username=?");
     $stmt->bind_param("s", $Uname);
     $stmt->execute();
-    $GetUsers = $stmt->get_result();
-    if($row = $GetUsers->fetch_assoc()){
+    $getData = $stmt->get_result();
+    if($row = $getData->fetch_assoc()){
         if(password_verify($pass,$row['password'])){
-            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['users'] = $row['id'];
             $_SESSION['role'] = $row['role'];
 
-            if($_SESSION['role'] == 'admin'){
-                $_SESSION['success'] = "Welcome to Admin Dashboard!";
+           if($_SESSION['role'] == 'admin'){
+                $_SESSION['success'] = "Welcome To Admin Dashboard";
                 header("Location: admin/admin.php");
                 exit;
-            }else{
-                $_SESSION['success'] = "Welcome to Employee Dashboard!";
+           }else{
+                $_SESSION['success'] = "Welcome To Employee Dashboard";
                 header("Location: user/profile.php");
                 exit;
-            }
+           }
         }else{
-            $_SESSION['error'] = "Encorrect Password";
-            header("Location: ". $_SERVER['PHP_SELF']);
+            $_SESSION['error'] = "Incorrect Password";
+            header("Location: ". $_SERVER["PHP_SELF"]);
             exit;
         }
     }else{
-        $_SESSION['error'] = "User Not Found!";
-        header("Location: ". $_SERVER['PHP_SELF']);
+        $_SESSION['error'] = "Sorry this Username is Not Registered!";
+        header("Location: ". $_SERVER["PHP_SELF"]);
         exit;
     }
 }

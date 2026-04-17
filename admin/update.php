@@ -1,5 +1,12 @@
 <?php 
 include '../connection/db.php';
+include '../session/session.php';
+
+requiredLogin();
+requiredRole('admin');
+// if(!isset($_SESSION['users']) || $_SESSION['role'] != 'admin'){
+//     header("Location: ../login.php");
+// }
 
 $id = $_GET['id'] ?? 0;
 
@@ -7,7 +14,6 @@ $stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $GetData = $stmt->get_result()->fetch_assoc();
-// $result = $GetData->fetch_array();
 ?>
 <?php include '../template/header.php'; ?>
 
@@ -62,6 +68,7 @@ $GetData = $stmt->get_result()->fetch_assoc();
                         <option value="hrd" <?= ($GetData['position'] == 'hrd') ? 'selected' : '' ?>>HRD</option>
                     </select>
                     </div>
+
 
                     <div class="modal-footer">
                         <a href="admin.php" class="btn btn-secondary" style="margin-right: 4px;">CANCEL</a>
