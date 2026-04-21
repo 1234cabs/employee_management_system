@@ -1,17 +1,15 @@
 <?php 
-session_start();
 
-function requiredLogin() {
-    if(!isset($_SESSION['users'])){
+function RequiredLogin() {
+    if(!isset($_SESSION['user_id'])){
         header("Location: ../login.php");
-        exit;
     }
 }
- 
-function requiredRole($role){
-    if(!isset($_SESSION['users']) || $_SESSION['role'] !== $role){
+
+function RequiredRole($role) {
+    if(!isset($_SESSION['user_id']) || $_SESSION['role'] !== $role){
         header("Location: ../login.php");
-        exit;
     }
 }
+
 ?>

@@ -1,14 +1,13 @@
 <?php
 include '../connection/db.php';
-
 include '../session/session.php';
 
-requiredLogin();
-requiredRole('admin');
-
-// if(!isset($_SESSION['users']) || $_SESSION['role'] != 'admin'){
+// if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin'){
 //     header("Location: ../login.php");
 // }
+
+RequiredLogin();
+RequiredRole('admin');
 ?>
 
 
@@ -53,13 +52,22 @@ requiredRole('admin');
 
             <tbody id="table-data">
                 <?php 
-                $stmt = $conn->prepare("SELECT * FROM users ORDER BY date DESC");
+
+                $limit = 10;
+                
+                $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                if($page < 1) $page = 1;
+
+                $start = ($page - 1 ) * $limit;
+
+                $stmt = $conn->prepare("SELECT * FROM users ORDER BY date DESC LIMIT ?, ?");
+                $stmt->bind_param("ii", $start,$limit);
                 $stmt->execute();
-                $getUser = $stmt->get_result();
+                $GetAllUser = $stmt->get_result();
 
-                if($getUser->num_rows > 0):
+                if($GetAllUser->num_rows > 0):
 
-                while($row = $getUser->fetch_assoc()):
+                while($row = $GetAllUser->fetch_assoc()):
                 ?>
                 <tr>
                     <td><?= $row['id']; ?></td>
@@ -71,17 +79,20 @@ requiredRole('admin');
                     <td><?= $row['role']; ?></td>
                     <td><?= $row['date']; ?></td>
                     <td>
-                        <div class="d-flex gap-1 justofy-content-center">
-                        <a href="update.php?id=<?= $row['id']; ?>" class="btn btn-outline-success btn-sm">UPDATE</a>
-                        <form action="function/function.php" method="post">
-                            <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                            <button type="submit" name="delete" class="btn btn-outline-danger btn-sm"
-                            onclick="return confirm('Are you Sure You Want to Delete this Recored?')">DELETE</button>
-                        </form>
+                        <div class="d-flex justify-content-center gap-1">
+                            <a href="update.php?id=<?= $row['id']; ?>" class="btn btn-success btn-sm">UPDATE</a>
+                            <form action="function/function.php" method="post">
+                                <input type="hidden" name="id" value="<?= $row['id']; ?>">
+                                <button type="submit" name="delete" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Are You Sure You Want to Delete this Record?')">
+                                    DELETE
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>
-                <?php endwhile; 
+                <?php endwhile;
+                
                 else:
                 ?>
                 <tr>
@@ -92,10 +103,42 @@ requiredRole('admin');
 
 
         </table>
+
+        <!-- PAGINATION -->
+
+        <?php 
+            $totalQuery = $conn->prepare("SELECT COUNT(*) as total FROM users");
+            $totalQuery->execute();
+            $totalRow = $totalQuery->get_result()->fetch_assoc();
+
+            $total = $totalRow['total'];
+            $totalpages = ceil($total / $limit);
+            
+            ?>
+         <?php if($total > $limit): ?>
+        <nav aria-label="Page navigation example" style="margin-left: 81%;">
+            
+            <ul class="pagination">
+
+                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=<?= $page - 1; ?>">Previous</a>
+                </li>
+
+                <?php for($i = 1; $i <= $totalpages; $i++ ): ?>
+                <li class="page-item <?= ($i == $page ) ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                </li>
+                <?php endfor; ?>
+
+                <li class="page-item <?= ($page >= $totalpages) ? 'disabled' : '' ?>" >
+                    <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <?php endif; ?>
     </div>
 
 </div>
-
 
 <script>
 document.getElementById("search").addEventListener("keyup", function() {
@@ -115,6 +158,8 @@ document.getElementById("search").addEventListener("keyup", function() {
     xhr.send("search=" + value);
 });
 </script>
+
+
 
 
 <?php include '../template/footer.php'; ?>

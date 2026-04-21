@@ -2,17 +2,15 @@
 include 'connection/db.php';
 include 'session/session.php';
 
-if(isset($_SESSION['users'])){
-
-    if($_SESSION['role'] == 'admin'){
+if(isset($_SESSION['user_id'])){
+    if(isset($_SESSION['role']) == 'admin'){
         header("Location: admin/admin.php");
     }else{
         header("Location: user/profile.php");
     }
-
 }
 
-if(isset($_POST['login'])){
+if(isset($_POST['login'])) {
     $Uname = $_POST['username'];
     $pass = $_POST['password'];
 
@@ -25,28 +23,28 @@ if(isset($_POST['login'])){
     $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE username=?");
     $stmt->bind_param("s", $Uname);
     $stmt->execute();
-    $getData = $stmt->get_result();
-    if($row = $getData->fetch_assoc()){
+    $GetUser = $stmt->get_result();
+    if($row = $GetUser->fetch_assoc()){
         if(password_verify($pass,$row['password'])){
-            $_SESSION['users'] = $row['id'];
+            $_SESSION['user_id'] = $row['id'];
             $_SESSION['role'] = $row['role'];
 
-           if($_SESSION['role'] == 'admin'){
-                $_SESSION['success'] = "Welcome To Admin Dashboard";
+            if($_SESSION['role'] == 'admin'){
+                $_SESSION['success'] = "Welcome To Admin Dashboard!";
                 header("Location: admin/admin.php");
                 exit;
-           }else{
-                $_SESSION['success'] = "Welcome To Employee Dashboard";
+            }else{
+                $_SESSION['success'] = "Welcome To Employee Dashboard!";
                 header("Location: user/profile.php");
                 exit;
-           }
+            }
         }else{
-            $_SESSION['error'] = "Incorrect Password";
+            $_SESSION['error'] = "Incorrect Password!";
             header("Location: ". $_SERVER["PHP_SELF"]);
             exit;
         }
     }else{
-        $_SESSION['error'] = "Sorry this Username is Not Registered!";
+        $_SESSION['error'] = "This Username is Not Registered!";
         header("Location: ". $_SERVER["PHP_SELF"]);
         exit;
     }

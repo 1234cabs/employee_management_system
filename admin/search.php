@@ -1,18 +1,20 @@
-<?php
+<?php 
+
 include '../connection/db.php';
 
-$search = $_POST['search'] ?? '';
+$search = $_POST['search'];
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE fullname LIKE ?");
 $like = "%$search%";
 $stmt->bind_param("s", $like);
 $stmt->execute();
+$GetSearch = $stmt->get_result();
 
-$result = $stmt->get_result();
+if($GetSearch->num_rows > 0):
 
-if($result->num_rows > 0):
+while($row = $GetSearch->fetch_assoc()):
 
-while($row = $result->fetch_assoc()):
+
 ?>
 
 <tr>
@@ -24,17 +26,12 @@ while($row = $result->fetch_assoc()):
     <td><?= $row['position']; ?></td>
     <td><?= $row['role']; ?></td>
     <td><?= $row['date']; ?></td>
-    <td></td>
 </tr>
 
-<?php endwhile; 
+<?php endwhile;
 else:
 ?>
-    <tr>
-        <td colspan="9" class="text-danger text-center">NO RECORDS FOUND!</td>
-    </tr>
+<tr>
+    <td colspan="9" class="text-center">No Users Matched your Search <span class="text-danger"><?= htmlspecialchars($search); ?></span> </td>
+</tr>
 <?php endif; ?>
-
-
-
-
