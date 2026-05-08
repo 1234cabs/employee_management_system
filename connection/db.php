@@ -1,16 +1,15 @@
 <?php 
-    session_start();
+session_start();
 
-    $host = "localhost";
-    $user = "root";
-    $pass = "";
-    $db = "employee";
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db = "employee";
 
-    $conn = new mysqli($host,$user,$pass,$db);
+$conn = new mysqli($host,$user,$pass,$db);
 
-        if($conn->connect_error){
-            die("Connection Faild: ". $conn->connect_error);
-        }
-    
-    
+if($conn->connect_error){
+    die("Connection Failed: ". $conn->connect_errno);
+}
+
 ?>

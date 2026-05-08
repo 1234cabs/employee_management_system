@@ -1,6 +1,5 @@
 <?php 
 include 'connection/db.php';
-include 'session/session.php';
 
 if(isset($_SESSION['user_id'])){
     if(isset($_SESSION['role']) == 'admin'){
@@ -10,47 +9,47 @@ if(isset($_SESSION['user_id'])){
     }
 }
 
-if(isset($_POST['login'])) {
-    $Uname = $_POST['username'];
-    $pass = $_POST['password'];
+if(isset($_POST['login'])){
+    $uname = $_POST['username'];
+    $pass =  $_POST['password'];
 
-    if(empty($Uname) || empty($pass)){
-        $_SESSION['error'] = "All Feilds Are Required!";
-        header("Location: ". $_SERVER["PHP_SELF"]);
+    if(empty($uname) || empty($pass)){
+        $_SESSION['alert'] = "All Feilds Are Required";
+        header("Location: ". $_SERVER['PHP_SELF']);
         exit;
     }
 
     $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE username=?");
-    $stmt->bind_param("s", $Uname);
+    $stmt->bind_param("s", $uname);
     $stmt->execute();
-    $GetUser = $stmt->get_result();
-    if($row = $GetUser->fetch_assoc()){
+    $getData = $stmt->get_result();
+    if($row = $getData->fetch_assoc()){
         if(password_verify($pass,$row['password'])){
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['role'] = $row['role'];
 
             if($_SESSION['role'] == 'admin'){
-                $_SESSION['success'] = "Welcome To Admin Dashboard!";
+                $_SESSION['success'] = "Welcome to Admin Dashboard";
                 header("Location: admin/admin.php");
                 exit;
             }else{
-                $_SESSION['success'] = "Welcome To Employee Dashboard!";
+                $_SESSION['success'] = "Welcome to Employee Dashboard";
                 header("Location: user/profile.php");
                 exit;
             }
         }else{
-            $_SESSION['error'] = "Incorrect Password!";
-            header("Location: ". $_SERVER["PHP_SELF"]);
+            $_SESSION['alert'] = "Incorrect Password";
+            header("Location: ". $_SERVER['PHP_SELF']);
             exit;
         }
     }else{
-        $_SESSION['error'] = "This Username is Not Registered!";
-        header("Location: ". $_SERVER["PHP_SELF"]);
+        $_SESSION['alert'] = "This Username is Not Register";
+        header("Location: ". $_SERVER['PHP_SELF']);
         exit;
     }
 }
-?>
-            
+
+?>       
 <?php include 'template/header.php'; ?>
 
 <?php include 'alert.php'; ?>
@@ -60,6 +59,13 @@ if(isset($_POST['login'])) {
     <div class="card custom-shadow p-4" style="width: 100%; max-width: 400px; border-radius: 15px;">
 
         <h3 class="text-center mb-4">Login Form</h3>
+
+        <?php if(isset($_SESSION['alert'])) { ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span><?= $_SESSION['alert']; ?> </span>
+  <button type="button" class="btn-close btn-close-black" data-bs-dismiss="alert" style="margin-left: 34px;" aria-label="Close"></button>
+</div>
+<?php unset($_SESSION['alert']); } ?>
 
         <form method="post">
 

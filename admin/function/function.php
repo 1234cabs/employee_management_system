@@ -1,18 +1,18 @@
 <?php 
 include '../../connection/db.php';
 
-if(isset($_POST['create'])) {
-    $Fname = trim($_POST['fullname']);
+if(isset($_POST['create'])){
+    $fname = trim($_POST['fullname']);
     $email = trim($_POST['email']);
     $contact = trim($_POST['contact']);
-    $Uname = trim($_POST['username']);
+    $uname = trim($_POST['username']);
     $pos = trim($_POST['position']);
     $role = trim($_POST['role']);
     $password = trim($_POST['password']);
 
-    if(empty($Fname) || empty($email) || empty($contact) || empty($Uname) || 
+    if(empty($fname) || empty($email) || empty($contact) || empty($uname) ||
     empty($pos) || empty($role) || empty($password)){
-        $_SESSION['error'] = "All Feilds Are Required!";
+        $_SESSION['error'] = "All Feilds Are Required";
         header("Location: ../admin.php");
         exit;
     }
@@ -24,32 +24,32 @@ if(isset($_POST['create'])) {
     $stmt->execute();
     $GetEmail = $stmt->get_result();
     if($GetEmail->num_rows > 0){
-        $_SESSION['error'] = "Email is Already Exist!";
+        $_SESSION['error'] = "Email is Already Exist";
         header("Location: ../admin.php");
         exit;
     }
-    
-    $stmt = $conn->prepare("INSERT INTO users (fullname,email,contact,
-    username,position,role,password) VALUES(?,?,?,?,?,?,?)");
-    $stmt->bind_param("sssssss", $Fname,$email,$contact,$Uname,$pos,$role,$pass);
-    $stmt->execute();
-    $_SESSION['success'] = "New Employee Added Successfully!";
-    header("Location: ../admin.php");
-    exit;
 
+    $stmt =  $conn->prepare("INSERT INTO users (fullname,email,contact,username,position,role,password)
+     VALUES(?,?,?,?,?,?,?)");
+     $stmt->bind_param("sssssss", $fname,$email,$contact,$uname,$pos,$role,$pass);
+     $stmt->execute();
+     $_SESSION['success'] = "New Employee Added Successfully";
+     header("Location: ../admin.php");
+     exit;
 }
 
-//UPDATE
+//update
 if(isset($_POST['update'])){
     $id = $_POST['id'];
-    $Fname = $_POST['fullname'];
+    $fname = $_POST['fullname'];
     $email = $_POST['email'];
     $contact = $_POST['contact'];
-    $Uname = $_POST['username'];
-    $pos =  $_POST['position'];
+    $uname = $_POST['username'];
+    $pos = $_POST['position'];
 
-    if(empty($Fname) || empty($email) || empty($contact) || empty($Uname) || empty($pos)){
-        $_SESSION['error'] = "All Feilds Are Required!";
+    if(empty($fname) || empty($email) || empty($contact) ||
+    empty($uname) || empty($pos)){
+        $_SESSION['error'] = "All Feilds Are Required";
         header("Location: ../admin.php");
         exit;
     }
@@ -57,34 +57,33 @@ if(isset($_POST['update'])){
     $stmt = $conn->prepare("SELECT * FROM users WHERE email=? AND id<>?");
     $stmt->bind_param("si", $email,$id);
     $stmt->execute();
-    $ExistEmail = $stmt->get_result();
-    if($ExistEmail->num_rows > 0){
-        $_SESSION['error'] = "This Email is Already Used!";
+    $getuser = $stmt->get_result();
+    if($getuser->num_rows > 0){
+        $_SESSION['error'] = "This Email is Already Used";
         header("Location: ../admin.php");
         exit;
     }
 
     $stmt = $conn->prepare("UPDATE users SET fullname=?,email=?,contact=?,username=?,position=? WHERE id=?");
-    $stmt->bind_param("sssssi", $Fname,$email,$contact,$Uname,$pos,$id);
+    $stmt->bind_param("sssssi", $fname,$email,$contact,$uname,$pos,$id);
     $stmt->execute();
     if($stmt->affected_rows == 0){
         $_SESSION['error'] = "No Changes Made";
     }else{
-        $_SESSION['success'] = "This Record Successfully Update!";
+        $_SESSION['success'] = "This Record Successfully Update";
     }
 
-    header("Location: ../admin.php");
+    header('Location: ../admin.php');
     exit;
 }
 
 //DELETE
-
 $id = $_POST['id'];
 
 $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$_SESSION['success'] = "This Record Successfully Deleted!";
+$_SESSION['success'] = "Deleted Successfully";
 header("Location: ../admin.php");
 
 ?>

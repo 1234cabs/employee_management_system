@@ -1,16 +1,12 @@
 <?php 
 include '../connection/db.php';
-include '../session/session.php';
-
-RequiredLogin();
-RequiredRole('admin');
 
 $id = $_GET['id'] ?? 0;
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$GetUsers = $stmt->get_result()->fetch_assoc();
+$result = $stmt->get_result()->fetch_assoc();
 
 ?>
 <?php include '../template/header.php'; ?>
@@ -29,31 +25,31 @@ $GetUsers = $stmt->get_result()->fetch_assoc();
             <div class="card-body">
                 <form action="function/function.php" method="post">
                     <div class="mb-3">
-                        <input type="hidden" name="id" value="<?= $GetUsers['id']; ?>">
+                        <input type="hidden" name="id" value="<?= $result['id']; ?>">
                         <lable class="form-label">FULLNAME</lable>
-                        <input type="text" name="fullname" id="" class="form-control" value="<?= $GetUsers['fullname']; ?>">
+                        <input type="text" name="fullname" id="" class="form-control" value="<?= $result['fullname']; ?>">
                     </div>
                     <div class="mb-3">
                         <lable class="form-label">EMAIL</lable>
-                        <input type="email" name="email" id="" class="form-control" value="<?= $GetUsers['email']; ?>" >
+                        <input type="email" name="email" id="" class="form-control" value="<?= $result['email']; ?>">
                     </div>
 
                     <div class="mb-3">
                         <lable class="form-label">CONTACT</lable>
-                        <input type="number" name="contact" id="" class="form-control" value="<?= $GetUsers['contact']; ?>">
+                        <input type="number" name="contact" id="" class="form-control" value="<?= $result['contact']; ?>">
                     </div>
 
                     <div class="mb-3">
                         <lable class="form-label">USERNAME</lable>
-                        <input type="text" name="username" id="" class="form-control" value="<?= $GetUsers['username']; ?>">
+                        <input type="text" name="username" id="" class="form-control" value="<?= $result['username']; ?>">
                     </div>
 
                     <div class="mb-3">
                     <label for="">POSITION</label>
                     <select name="position" id="" class="form-control">
-                        <option value="webdev" <?= ($GetUsers['position'] == 'webdev') ? 'selected' : '' ?>>Web Developer</option>
-                        <option value="frontdev" <?= ($GetUsers['position'] == 'frontdev') ? 'selected' : '' ?>>Front End Developer</option>
-                        <option value="hrd" <?= ($GetUsers['position'] == 'hrd') ? 'selected' : '' ?>>HRD</option>
+                        <option value="webdev" <?= ($result['position'] == 'webdev') ? 'selected' : '' ?>>Web Developer</option>
+                        <option value="frontdev" <?= ($result['position'] == 'frontdev') ? 'selected' : '' ?>>Front End Developer</option>
+                        <option value="hrd" <?= ($result['position'] == 'hrd') ? 'selected' : '' ?>>HRD</option> 
                     </select>
                     </div>
 

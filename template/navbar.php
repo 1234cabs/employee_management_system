@@ -1,12 +1,14 @@
+    <?php 
+   
 
-<?php 
-$id = $_SESSION['user_id'];
+    $id = $_SESSION['user_id'];
 
-$stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$GetUsers = $stmt->get_result()->fetch_assoc();
-?>
+    $stmt = $conn->prepare("SELECT * FROM users WHERE id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $GetProfile = $stmt->get_result()->fetch_assoc();
+    
+    ?>
     <nav class="navbar navbar-expand-lg bg-dark">
         <div class="container-fluid">
             <a href="#" class="navbar-brand text-white">LOGO</a>
@@ -33,7 +35,7 @@ $GetUsers = $stmt->get_result()->fetch_assoc();
                         <th><b>FULLNAME:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $GetUsers['fullname']; ?></th>
+                        <th><?= $GetProfile['fullname']; ?></th>
                     </tr>
                     <hr>
 
@@ -41,7 +43,7 @@ $GetUsers = $stmt->get_result()->fetch_assoc();
                         <th><b>EMAIL:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $GetUsers['email']; ?></th>
+                        <th><?= $GetProfile['email']; ?></th>
                     </tr>
                     <hr>
 
@@ -49,7 +51,7 @@ $GetUsers = $stmt->get_result()->fetch_assoc();
                         <th><b>CONTACT:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $GetUsers['contact']; ?></th>
+                        <th><?= $GetProfile['contact']; ?></th>
                     </tr>
                     <hr>
 
@@ -57,7 +59,7 @@ $GetUsers = $stmt->get_result()->fetch_assoc();
                         <th><b>POSITION:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $GetUsers['position']; ?></th>
+                        <th><?= $GetProfile['position']; ?></th>
                     </tr>
                     <hr>
 
@@ -65,7 +67,7 @@ $GetUsers = $stmt->get_result()->fetch_assoc();
                         <th><b>ROLE:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $GetUsers['role']; ?></th>
+                        <th><?= $GetProfile['role']; ?></th>
                     </tr>
                     <hr>
 
@@ -73,7 +75,7 @@ $GetUsers = $stmt->get_result()->fetch_assoc();
                         <th><b>USERNAME:</b></th>
                     </tr>
                     <tr>
-                        <th><?= $GetUsers['username']; ?></th>
+                        <th><?= $GetProfile['username']; ?></th>
                     </tr>
                     <hr>
                 </div>
